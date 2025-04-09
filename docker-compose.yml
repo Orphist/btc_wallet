@@ -1,0 +1,31 @@
+version: "3"
+
+# "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+#  "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+# docker compose build
+# docker compose run btc_wallet bundle exec bin/btc_wallet generate
+# docker compose run btc_wallet bundle exec bin/btc_wallet balance
+# docker compose run btc_wallet bundle exec bin/btc_wallet send -a tb1psv6wgyyf226ka8dpsskrjun2kdgnfhhlxdl7l83srzqrh93manwsj3dg26 -m 11200
+#  "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+# "`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-'"`-._,-
+
+services:
+  btc_wallet:
+    container_name: btc_wallet
+    environment:
+      WALLET_DATA_DIR: /app/.bitcoinrb
+      WALLET_KEY_FILE: privkey
+      BITCOIN_NETWORK: signet
+      LOGGER_LEVEL: error
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+      cache_from: [docker.io/library/ruby:3.1.0-bullseye]
+    volumes:
+      - btc_wallet_bundle_cache:/usr/local/bundle
+      - ./.docker/entrypoints/entrypoint.sh:/entrypoint.sh
+      - ./.docker/.bitcoinrb:/app/.bitcoinrb
+    entrypoint: /entrypoint.sh
+
+volumes:
+  btc_wallet_bundle_cache:
